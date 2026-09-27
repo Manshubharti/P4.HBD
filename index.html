@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, My Bestie ✨</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Swiper CSS for Multipage Touch Slider -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+    <style>
+        :root {
+            --primary: #ff4081;
+            --gold: #ffd700;
+            --purple-dark: #0d0614;
+            --card-bg: rgba(255, 255, 255, 0.07);
+            --card-border: rgba(255, 255, 255, 0.18);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--purple-dark);
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+        }
+
+        /* 3D WebGL Background */
+        #webgl-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Floating Audio Toggle */
+        .audio-toggle {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 100;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--gold);
+            padding: 0 15px;
+            height: 48px;
+            border-radius: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .audio-toggle:hover {
+            transform: scale(1.05);
+            background: rgba(255, 64, 129, 0.3);
+        }
+
+        /* Swiper Container Setup */
+        .swiper {
+            width: 100%;
+            height: 100vh;
+            z-index: 10;
+        }
+
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Glassmorphism Multipage Card */
+        .page-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 30px;
+            width: 100%;
+            max-width: 550px;
+            min-height: 520px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 0 15px rgba(255,255,255,0.05);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* Animate content when page becomes active */
+        .swiper-slide-active .page-card {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Typography */
+        .page-number {
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.2rem;
+            background: linear-gradient(135deg, #fff, var(--primary), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 10px 0;
+        }
+
+        .subtitle {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 4px;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 20px;
+        }
+
+        .body-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #e0e0e0;
+            font-weight: 300;
+        }
+
+        /* Interactive Element Page 2: Photo Memory Frame */
+        .polaroid-frame {
+            background: #fff;
+            padding: 12px 12px 35px 12px;
+            border-radius: 6px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transform: rotate(-3deg);
+            transition: transform 0.4s ease;
+            cursor: pointer;
+            width: 200px;
+            margin: 15px 0;
+        }
+
+        .polaroid-frame:hover {
+            transform: rotate(0deg) scale(1.05);
+        }
+
+        .polaroid-frame img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .polaroid-caption {
+            font-family: 'Dancing Script', cursive;
+            color: #333;
+            font-size: 1.3rem;
+            margin-top: 8px;
+        }
+
+        /* Interactive Element Page 3: Birthday Cake & Blow Candle */
+        .cake-container {
+            position: relative;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+
+        .cake-icon {
+            font-size: 5rem;
+            color: var(--gold);
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
+        }
+
+        .flame {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 26px;
+            background: linear-gradient(to bottom, #ffeb3b, #ff5722);
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 20px #ffeb3b;
+            animation: flicker 0.1s infinite alternate;
+            transition: opacity 0.5s ease;
+        }
+
+        .flame.off {
+            opacity: 0;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); }
+            100% { transform: translateX(-50%) scale(1.15); }
+        }
+
+        /* Interactive Element Page 4: Unwrap Gift */
+        .gift-box {
+            font-size: 5rem;
+            color: var(--primary);
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 10px 20px rgba(255,64,129,0.5));
+            margin: 20px 0;
+        }
+
+        .gift-box:hover {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        /* Buttons */
+        .btn-action {
+            background: linear-gradient(45deg, var(--primary), #e91e63);
+            border: none;
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 64, 129, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255, 64, 129, 0.6);
+        }
+
+        /* Swiper Pagination Styling */
+        .swiper-pagination-bullet {
+            background: #fff !important;
+            opacity: 0.4;
+        }
+        .swiper-pagination-bullet-active {
+            background: var(--primary) !important;
+            opacity: 1;
+            width: 20px !important;
+            border-radius: 10px !important;
+        }
+
+        .swipe-hint {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
+            60% { transform: translateY(-4px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- REAL HTML AUDIO PLAYER -->
+    <!-- REPLACE "music.mp3" BELOW WITH YOUR SONG FILE NAME OR A FULL DIRECT MUSIC URL -->
+    <audio id="mySong" loop preload="auto">
+        <source src="arz.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- 3D Particle Canvas Background -->
+    <div id="webgl-bg"></div>
+
+    <!-- Audio Button -->
+    <div class="audio-toggle" onclick="toggleMusic()">
+        <i class="fa-solid fa-music" id="musicIcon"></i>
+        <span id="musicText">Play Song</span>
+    </div>
+
+    <!-- Multipage Swiper Deck -->
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+
+            <!-- PAGE 1: COVER -->
+            <div class="swiper-slide">
+                <div class="page-card">
+                    <span class="page-number">Chapter I</span>
+                    <div>
+                        <h1 class="title">Happy Birthday</h1>
+                        <p class="subtitle">TO THE MOST BEAUTIFUL GIRL</p>
+                    </div>
+                    <p class="body-text">
+                        Welcome to a digital space crafted entirely for you. Flip through the pages to unlock your birthday surprise...
+                    </p>
+                    <div class="swipe-hint">
+                        Swipe left or tap to begin <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 2: MEMORIES & COMPLIMENT -->
+            <div class="swiper-slide">
+                <div class="page-card">
+                    <span class="page-number">Chapter II</span>
+                    <h2 class="title">Pure Elegance</h2>
+                    
+                    <div class="polaroid-frame" onclick="triggerHearts()">
+                        <!-- Replace src with her photo link if desired -->
+                        <img src="image.jpg" alt="Her Photo">
+                        <div class="polaroid-caption">Simply Radiant ✨</div>
+                    </div>
+
+                    <p class="body-text">
+                        "Your smile has a way of lighting up every single room. Never forget how truly extraordinary you are."
+                    </p>
+                    <span class="swipe-hint">Tap photo for magic • Swipe <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </div>
+
+            <!-- PAGE 3: INTERACTIVE WISH & CAKE -->
+            <div class="swiper-slide">
+                <div class="page-card">
+                    <span class="page-number">Chapter III</span>
+                    <h2 class="title">Make a Wish</h2>
+                    
+                    <div class="cake-container" onclick="blowCandle()">
+                        <div class="flame" id="candleFlame"></div>
+                        <i class="fa-solid fa-birthday-cake cake-icon"></i>
+                    </div>
+
+                    <p class="body-text" id="wishText">
+                        Close your eyes, think of your biggest dream, and <strong>click the flame</strong> to blow out the candle!
+                    </p>
+                    <button class="btn-action" onclick="blowCandle()">Blow Candle 🎂</button>
+                </div>
+            </div>
+
+            <!-- PAGE 4: UNWRAP SURPRISE GIFT -->
+            <div class="swiper-slide">
+                <div class="page-card">
+                    <span class="page-number">Chapter IV</span>
+                    <h2 class="title">Your Birthday Gift</h2>
+                    
+                    <div class="gift-box" id="giftBox" onclick="openGift()">
+                        <i class="fa-solid fa-gift"></i>
+                    </div>
+
+                    <p class="body-text" id="giftMessage">
+                        Tap the gift box above to unwrap your special birthday blessing!
+                    </p>
+
+                    <button class="btn-action" onclick="openGift()">Unwrap Gift 🎁</button>
+                </div>
+            </div>
+
+            <!-- PAGE 5: FINAL BLESSING -->
+            <div class="swiper-slide">
+                <div class="page-card">
+                    <span class="page-number">Final Chapter</span>
+                    <h1 class="title">Always Keep Shining</h1>
+                    <p class="subtitle">MAY ALL YOUR DREAMS COME TRUE</p>
+
+                    <p class="body-text">
+                        May this year bring you endless peace, boundless joy, health, and love. Thank you for being your wonderful self! 💖
+                    </p>
+
+                    <button class="btn-action" onclick="fullConfetti()">Celebrate Again 🎉</button>
+                </div>
+            </div>
+
+        </div>
+        <!-- Swiper Navigation Dots -->
+        <div class="swiper-pagination"></div>
+    </div>
+
+    <!-- JS Libraries: Swiper, Three.js, Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        /* --------------------------------------------------
+         * 1. SWIPER JS MULTIPAGE CONFIGURATION
+         * -------------------------------------------------- */
+        const swiper = new Swiper(".mySwiper", {
+            effect: "cards",
+            grabCursor: true,
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            keyboard: {
+                enabled: true,
+            },
+        });
+
+        /* --------------------------------------------------
+         * 2. THREE.JS 3D FLOATING HEARTS BACKGROUND
+         * -------------------------------------------------- */
+        const container = document.getElementById('webgl-bg');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 30;
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // Heart Shape Generator
+        const heartShape = new THREE.Shape();
+        const x = 0, y = 0;
+        heartShape.moveTo(x + 25, y + 25);
+        heartShape.bezierCurveTo(x + 25, y + 25, x + 20, y, x, y);
+        heartShape.bezierCurveTo(x - 30, y, x - 30, y + 35, x - 30, y + 35);
+        heartShape.bezierCurveTo(x - 30, y + 55, x - 10, y + 77, x + 25, y + 95);
+        heartShape.bezierCurveTo(x + 60, y + 77, x + 80, y + 55, x + 80, y + 35);
+        heartShape.bezierCurveTo(x + 80, y, x + 50, y, x + 50, y);
+        heartShape.bezierCurveTo(x + 35, y, x + 25, y + 16, x + 25, y + 25);
+
+        const extrudeSettings = { depth: 4, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 2, bevelThickness: 2 };
+        const heartGeo = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
+        heartGeo.center();
+
+        const heartsGroup = new THREE.Group();
+        const heartMaterials = [
+            new THREE.MeshPhongMaterial({ color: 0xff4081, shininess: 100 }),
+            new THREE.MeshPhongMaterial({ color: 0xff80ab, shininess: 80 }),
+            new THREE.MeshPhongMaterial({ color: 0xffd700, shininess: 120 })
+        ];
+
+        for (let i = 0; i < 25; i++) {
+            const mat = heartMaterials[Math.floor(Math.random() * heartMaterials.length)];
+            const mesh = new THREE.Mesh(heartGeo, mat);
+            mesh.position.set(
+                (Math.random() - 0.5) * 60,
+                (Math.random() - 0.5) * 60,
+                (Math.random() - 0.5) * 40
+            );
+            mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+            const scale = Math.random() * 0.04 + 0.02;
+            mesh.scale.set(scale, scale, scale);
+            mesh.userData = { speedY: Math.random() * 0.03 + 0.01, rotSpeed: Math.random() * 0.02 };
+            heartsGroup.add(mesh);
+        }
+        scene.add(heartsGroup);
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0xff4081, 1.5);
+        pointLight.position.set(20, 20, 20);
+        scene.add(pointLight);
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            heartsGroup.children.forEach(heart => {
+                heart.position.y += heart.userData.speedY;
+                heart.rotation.y += heart.userData.rotSpeed;
+                if (heart.position.y > 30) heart.position.y = -30;
+            });
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        /* --------------------------------------------------
+         * 3. INTERACTIVE PAGE ACTIONS
+         * -------------------------------------------------- */
+
+        // Candle Blow Action
+        let flameBlown = false;
+        function blowCandle() {
+            if (!flameBlown) {
+                document.getElementById('candleFlame').classList.add('off');
+                document.getElementById('wishText').innerHTML = "✨ <strong>Wish Sent!</strong> May universe make all your wishes come true!";
+                fullConfetti();
+                flameBlown = true;
+            }
+        }
+
+        // Gift Reveal Action
+        let giftOpened = false;
+        function openGift() {
+            const giftBox = document.getElementById('giftBox');
+            if (!giftOpened) {
+                giftBox.innerHTML = '<i class="fa-solid fa-heart-pulse" style="color: #ff4081;"></i>';
+                document.getElementById('giftMessage').innerHTML = "🎁 <strong>Surprise!</strong> You hold the key to unlimited happiness, unforgettable adventures, and endless love!";
+                fullConfetti();
+                giftOpened = true;
+            }
+        }
+
+        // Photo Tap Burst
+        function triggerHearts() {
+            confetti({
+                particleCount: 40,
+                spread: 60,
+                origin: { y: 0.5 },
+                colors: ['#ff4081', '#ffd700']
+            });
+        }
+
+        // Confetti Fireworks
+        function fullConfetti() {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+
+        /* --------------------------------------------------
+        * 4. REAL MUSIC PLAYER FUNCTIONALITY
+        * -------------------------------------------------- */
+        let isPlaying = false;
+        
+        function toggleMusic() {
+        const song = document.getElementById('mySong');
+        const icon = document.getElementById('musicIcon');
+        const text = document.getElementById('musicText');
+        
+        if (isPlaying) {
+        song.pause();
+        icon.className = "fa-solid fa-music";
+        text.innerHTML = "Play Song";
+        isPlaying = false;
+        } else {
+        // SET YOUR START TIME HERE IN SECONDS
+        // Example: To start at 45 seconds, change 0 to 45
+        if (song.currentTime === 0) {
+        song.currentTime = 132; // <--- Change 45 to whatever second you want
+        }
+        
+        song.play().then(() => {
+        icon.className = "fa-solid fa-pause";
+        text.innerHTML = "Pause";
+        isPlaying = true;
+        }).catch(err => {
+        alert("To play music, make sure you put a file named 'music.mp3' in the same folder as this HTML file!");
+        });
+        }
+        }
+        
+
+        // Responsive Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSizize(window.innerWidth, window.innerHeight);
+            });
+            </script>
+            </body>
+            </html>ght);
+            });
+            </script>
+            </body>
+            </html>
